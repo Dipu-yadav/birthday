@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Mamta!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #0b0f19;
+            position: fixed; 
+            touch-action: none;
+        }
+
+        /* Background Image */
+        .bg-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-image: url('photo.jpg'); 
+            background-size: cover;
+            background-position: center center;
+            filter: blur(12px) brightness(0.4);
+            transform: scale(1.1);
+            z-index: 1;
+        }
+
+        .bg-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, rgba(255, 20, 147, 0.3), rgba(138, 43, 226, 0.4));
+            z-index: 2;
+        }
+
+        /* Main Content Card */
+        .content-card {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            padding: 6vh 5vw; 
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 30px;
+            box-shadow: 0 20px 70px rgba(0, 0, 0, 0.6);
+            width: 90%; 
+            max-width: 650px; 
+            min-height: 350px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        /* Initial Click Me Button */
+        .btn-click-me {
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            color: white;
+            font-size: clamp(1.3rem, 5vw, 2rem); 
+            font-weight: 800;
+            padding: 25px 60px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 15px 35px rgba(255, 65, 108, 0.7);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            outline: none;
+        }
+
+        .btn-click-me:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 20px 40px rgba(255, 65, 108, 0.9);
+        }
+
+        .btn-click-me:active {
+            transform: translateY(5px);
+            box-shadow: 0 8px 20px rgba(255, 65, 108, 0.7);
+        }
+
+        /* Hidden Birthday Wish State */
+        .birthday-message {
+            display: none;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 1.2s ease, transform 1.2s ease;
+            width: 100%;
+        }
+
+        .birthday-message.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        h1 {
+            color: #ffffff;
+            font-size: clamp(2rem, 8vw, 3.5rem); 
+            margin-bottom: 25px;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+            word-wrap: break-word;
+        }
+
+        p {
+            color: #ffffff;
+            font-size: clamp(1.1rem, 3.5vw, 1.5rem);
+            line-height: 1.8;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.4);
+            font-weight: 300;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 10px #fff, 0 0 20px #ff416c, 0 0 30px #ff416c, 0 0 40px #ff416c;
+            }
+            to {
+                text-shadow: 0 0 20px #fff, 0 0 30px #ff1493, 0 0 40px #ff1493, 0 0 50px #ff1493;
+            }
+        }
+
+        #confetti-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-container"></div>
+    <div class="bg-overlay"></div>
+
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="content-card" id="card">
+        <button class="btn-click-me" id="clickBtn" onclick="startCelebration()">Click Me</button>
+
+        <div class="birthday-message" id="bdayMessage">
+            <h1>Happy Birthday, Mamta! 🎉</h1>
+            <p>Sending you all my love and warmest wishes on your special day. May your year ahead be filled with endless happiness, beautiful surprises, and much success! Have a blast! 💖✨</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
+    <script>
+        let continuousFireworks = null;
+
+        function startCelebration() {
+            const btn = document.getElementById('clickBtn');
+            const message = document.getElementById('bdayMessage');
+            const card = document.getElementById('card');
+
+            // 1. Hide button and show message
+            btn.style.display = 'none';
+            message.classList.add('show');
+            card.style.background = 'rgba(255, 255, 255, 0.2)';
+
+            // 2. Start continuous side fireworks blasting every second
+            startContinuousFireworks();
+
+            // 3. Play 10-second song
+            playBirthdaySong();
+        }
+
+        function startContinuousFireworks() {
+            // Fire immediately on click
+            fireSideRockets();
+
+            // Keep firing every 1 second (1000ms) continuously
+            continuousFireworks = setInterval(() => {
+                fireSideRockets();
+            }, 1000);
+        }
+
+        function fireSideRockets() {
+            const explosionConfig = {
+                particleCount: 50,
+                spread: 120,
+                startVelocity: 35,
+                decay: 0.9,
+                gravity: 0.6,
+                shapes: ['circle', 'star', 'emoji'],
+                emoji: {
+                    value: ['🎉', '✨', '❤️']
+                },
+                colors: ['#ff416c', '#ff4b2b', '#ffd700', '#ffffff']
+            };
+
+            // Left Side Blasting Up
+            confetti(Object.assign({}, explosionConfig, {
+                origin: { x: 0.15, y: 0.8 },
+                angle: 60
+            }));
+
+            // Right Side Blasting Up
+            confetti(Object.assign({}, explosionConfig, {
+                origin: { x: 0.85, y: 0.8 },
+                angle: 120
+            }));
+        }
+
+        // Web Audio API: Plays melody twice for ~10 seconds
+        function playBirthdaySong() {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return;
+            const ctx = new AudioContext();
+
+            const G4 = 392.00; const A4 = 440.00; const B4 = 493.88;
+            const C5 = 523.25; const D5 = 587.33; const E5 = 659.25; const F5s = 739.99;
+
+            const singleMelody = [
+                [G4, 0.25], [G4, 0.25], [A4, 0.5], [G4, 0.5], [C5, 0.5], [B4, 1.0],
+                [G4, 0.25], [G4, 0.25], [A4, 0.5], [G4, 0.5], [D5, 0.5], [C5, 1.0],
+                [G4, 0.25], [G4, 0.25], [E5, 0.5], [C5, 0.5], [B4, 0.5], [A4, 0.5],
+                [F5s, 0.25], [F5s, 0.25], [E5, 0.5], [C5, 0.5], [D5, 0.5], [C5, 1.0]
+            ];
+
+            const doubleMelody = [...singleMelody, ...singleMelody];
+
+            let time = ctx.currentTime + 0.5;
+
+            doubleMelody.forEach(([freq, duration]) => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, time);
+
+                gain.gain.setValueAtTime(0.12, time);
+                gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
+
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                osc.start(time);
+                osc.stop(time + duration);
+
+                time += duration;
+            });
+
+            // Stop the continuous fireworks automatically after the song ends (~10 seconds)
+            setTimeout(() => {
+                if (continuousFireworks) {
+                    clearInterval(continuousFireworks);
+                }
+            }, 10500);
+        }
+    </script>
+</body>
+</html>
